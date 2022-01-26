@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>  Test Login</h1>
+    
+     
+    {%  if reponse is defined %}
+        {%  if reponse.IsValid  %}
+            <div class='alert alert-sucess'>
+                 {{ reponse.CheckPasswordUserInfo}}
+            </div>
+        {%  else %}
+            <div class='alert alert-danger'>
+                 {{ reponse.CheckPasswordUserInfo}}
+            </div>
+        {%  endif  %}
+    {%  endif  %}
+
+    {% if form is defined %}
+        {{ form(form) }}
+    {%  endif  %}
+    
+{% endblock %}

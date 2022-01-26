@@ -1,0 +1,40 @@
+services:
+#    _defaults:
+#        autowire: true      # Automatically injects dependencies in your services.
+#        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+#        bind:               # defines the scalar arguments once and apply them to any service defined/created in this file
+        
+    Aldaflux\AldafluxIdsSanteBundle\Controller\IdsController:
+        arguments: ["@parameter_bag", "@security.user_password_hasher", "@router.default", "@logger"]
+        tags:
+            -
+                name: 'controller.service_arguments'
+            -
+                name:     monolog.logger
+                channel:       'ids'
+                
+        calls: [['setContainer', ['@Psr\Container\ContainerInterface']]]
+ 
+    Aldaflux\AldafluxIdsSanteBundle\Service\CheckPasswordService:
+        arguments: ["@parameter_bag", "@security.user_password_hasher", "@doctrine.orm.default_entity_manager", "@logger"]
+        tags:
+            -
+                name:     monolog.logger
+                channel:       'ids'
+        
+    Aldaflux\AldafluxIdsSanteBundle\Service\IDSLog:
+        arguments: ["@parameter_bag","@security.token_storage", "@request_stack", "@logger"]
+        tags:
+            -
+                name:     monolog.logger
+                channel:       'ids.log'
+    indaflux_ids_sante.idslog:
+        alias: Aldaflux\AldafluxIdsSanteBundle\Service\IDSLog
+        public: true        
+
+    Aldaflux\AldafluxIdsSanteBundle\DataCollector\IdsSanteCollector:
+        arguments: ["@indaflux_ids_sante.idslog","@parameter_bag"]
+        tags:
+            -
+                name:     data_collector
+                id:       'aldaflux.ids_sante_collector'

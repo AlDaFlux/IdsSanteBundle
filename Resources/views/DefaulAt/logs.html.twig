@@ -1,0 +1,45 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+    <h1>  Logs</h1>
+ 
+ 
+    
+    <table class='table table-bordered table-triable_desc'> 
+        <thead>
+            <tr>
+                <th>LogDate</th>
+                <th>Requester</th>
+                <th>OrganizationUnit</th>
+                <th>Unit</th>
+                <th>PageName</th>
+                <th>Patient</th>
+                <th>AccessType</th>
+                <th>Extra</th>
+                
+            </tr>
+        </thead>
+        <tbody>
+        {% for log in logs %}
+             
+                <td>{{ log.LogDate | date("Y-m-d H:i:s")}}</td>
+                <td>{{ log.Requester}}</td>
+                <td>{{ log.OrganizationUnit}}</td>
+                <td>{{ log.Unit}}</td>
+                <td>{{ log.PageName}}</td>
+                <td>{{ log.Patient}}</td>
+                <td>{{ log.AccessType}}</td>
+                <td>{{ log.Extra}}</td>
+               
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+     
+    
+    
+    
+    
+     
+{% endblock %}

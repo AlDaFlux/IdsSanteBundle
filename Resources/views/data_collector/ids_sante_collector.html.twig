@@ -1,0 +1,204 @@
+{% extends '@WebProfiler/Profiler/layout.html.twig' %}
+
+{% block toolbar %}
+    {% set icon %}
+        {% if collector.IDSActive %}
+            {%  if collector.ErrorLogCount  %}
+                {% include('@AldafluxIdsSante/data_collector/icon/ids_sante.svg.twig') %}
+                {% set status =   'red'   %}
+            {%  elseif collector.LogCount  %}
+                {% include('@AldafluxIdsSante/data_collector/icon/ids_sante.svg.twig') %}
+                {% set status =   'green'   %}
+            {%  else  %}
+                {% include('@AldafluxIdsSante/data_collector/icon/ids_sante.green.svg.twig') %}
+            {%  endif  %}
+
+            <span class="sf-toolbar-value">IDS Activé</span>
+        {% else  %}
+            {% include('@AldafluxIdsSante/data_collector/icon/ids_sante.svg.twig') %}
+            <span class="sf-toolbar-value">IDS Désactivé</span>
+        {% endif  %}
+                    <span class="sf-toolbar-status">{{collector.LogCount}} </span>
+        
+        
+
+    {% endset %}
+
+    {% set text %}
+        {# this is the content displayed when hovering the mouse over  the toolbar panel #}
+         
+        
+        <div class="sf-toolbar-info-piece">
+                <b>Application name</b>
+                <span class="sf-toolbar-status">{{collector.ApplicationIDSName}}</span>
+        </div>
+        <div class="sf-toolbar-info-piece">
+            <b>Logs</b>
+            <span class='sf-toolbar-status {{ collector.LogCount ? 'sf-toolbar-status-green' :  '' }}'>{{ collector.LogCount }}</span>
+        </div>
+        <div class="sf-toolbar-info-piece">
+            <b>Erreurs</b>
+            <span class='sf-toolbar-status {{ collector.ErrorLogCount ? 'sf-toolbar-status-red' : '' }}'>{{ collector.ErrorLogCount }}</span>
+        </div>
+    {% endset %}
+
+    {{ include('@WebProfiler/Profiler/toolbar_item.html.twig') }}
+    
+    
+    
+{% endblock %}
+
+{% block menu %}
+
+   
+    <span class="label ">
+        <span class="icon">
+        {% if collector.IDSActive %}
+            {% include('@AldafluxIdsSante/data_collector/icon/ids_sante.svg.twig') %}
+        {% else %}
+            {% include('@AldafluxIdsSante/data_collector/icon/ids_sante.svg.twig') %}
+        {% endif %}
+        </span>
+        <strong> Ids   </strong>
+            <span class="count">
+                <span>{{collector.LogCount}}</span>
+            </span>
+    </span>
+{% endblock %}
+
+
+
+
+{% block panel %}
+    <style>
+        h1.error
+        {
+            background-color: rgb(176, 65, 62);
+            color: white;
+        }
+    </style>
+    
+   <h2>IDS</h2>
+    
+    <div class="metrics">
+        <div class="metric">
+    {% if collector.IDSActive %}
+                <span class="value">
+                {% include "@AldafluxIdsSante/data_collector/icon/greencheck.svg.twig" %} 
+                   
+</span>
+                <span class="label">IDS activé</span>
+    {% else %}
+                 
+<span class="value">
+    <svg version="1.1"  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"  width="28" height="28" 
+	 viewBox="0 0 50 50" style="enable-background:new 0 0 50 50;" xml:space="preserve">
+<circle style="fill:#D75A4A;" cx="25" cy="25" r="25"/>
+<polyline style="fill:none;stroke:#FFFFFF;stroke-width:2;stroke-linecap:round;stroke-miterlimit:10;" points="16,34 25,25 34,16 
+	"/>
+<polyline style="fill:none;stroke:#FFFFFF;stroke-width:2;stroke-linecap:round;stroke-miterlimit:10;" points="16,16 25,25 34,34 
+	"/>
+<g> 
+</svg>
+</span>
+                <span class="label">IDS desactivé</span>
+                
+    {% endif %}
+            </div>
+            
+               <div class="metric">
+                <span class="value">{{collector.ApplicationIDSName}}</span>
+                <span class="label">Application name</span>
+            </div>
+
+               <div class="metric">
+                <span class="value">
+                {% if  collector.getIdsUser %}
+                    {{collector.getIdsUser}}
+                {% else %}
+                                {% include "@AldafluxIdsSante/data_collector/icon/redcross.svg.twig" %} 
+                {% endif %}
+                </span>
+                <span class="label"> Ids User</span>
+            </div>
+                
+               <div class="metric">
+                <span class="value">
+                {% if  collector.SessionIds %}
+                    {{collector.SessionIds}}
+                {% else %}
+                                {% include "@AldafluxIdsSante/data_collector/icon/redcross.svg.twig" %} 
+                {% endif %}
+                </span>
+                <span class="label"> Session Ids</span>
+            </div>
+                
+                 
+                
+
+                
+        </div>
+                     
+      
+     
+    <div class="tab-content">
+        {% if collector.ErrorLogCount %}     
+                <table id="search-results">
+                      <thead>
+                          <tr class="status-error">
+                              <th scope="col">faultcode</th>
+                              <th scope="col">PageName</th>
+                          </tr>
+                      </thead>
+              <tbody>
+            {% for log in collector.IDSLogsError %}
+                <tr class="status-error">
+                    <td>{{log.faultcode}}</td>
+                    <td>{{log.faultstring}}</td>
+                </tr>
+            {% endfor %}
+              </tbody>
+            </table>
+    {% endif %} 
+        
+        {% if collector.IDSLogs | length  > 0  %}
+        
+      <table id="search-results">
+            <thead>
+                <tr>
+                    <th scope="col">PageName</th>
+                    <th scope="col">Requester</th>
+                    <th scope="col">AuthCookie</th>
+                    <th scope="col">OrganizationUnit</th>
+                    <th scope="col">Unit</th>
+                    <th scope="col">Patient</th>
+                    <th scope="col">AccessType</th>
+                    <th scope="col">Extra</th>
+                </tr>
+            </thead>
+    <tbody>
+     {% for log in collector.IDSLogs %}
+                <tr>
+                    <td>{{log.PageName}}</td>
+                    <td>{{log.Requester}}</td>
+                    <td>{{log.AuthCookie}}</td>
+                    <td>{{log.OrganizationUnit}}</td>
+                    <td>{{log.Unit}}</td>
+                    <td>{{log.Patient}}</td>
+                    <td>{{log.AccessType}}</td>
+                    <td>{{log.Extra}}</td>
+                </tr>
+     {% endfor %}
+    </tbody>
+    </table>  
+                
+     {% else %}
+          <div class="empty">
+            <p>There are no IDS logs .</p>
+         </div>
+     {% endif %}
+        
+
+                   
+</div>
+{% endblock %}
