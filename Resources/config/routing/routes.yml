@@ -1,0 +1,7 @@
+#ids_checkpassword.wsdl:
+#    path: /ids/checkpassword.wsdl
+#    controller: Aldaflux\AldafluxIdsSanteBundle\Controller\IdsController::checkpasswordWdslAction
+
+controllers:
+    resource: '../../../Controller/'
+    type: annotation
