@@ -25,6 +25,7 @@ composer require aldaflux/ids-sante-bundle:dev-master
 security
    access_control:
         - { path: '^/ids/logs', roles: ROLE_ADMIN }
+        - { path: ^/ids, role: IS_AUTHENTICATED_ANONYMOUSLY }
 ```
 
 
@@ -47,11 +48,14 @@ aldaflux_ids_sante:
     active: false # default
     prefixe: '03' # default
     user:
-        class: "App:User" # default
+        class: "App\\Entity\\User"" # default
         find_by: "findOneByUsername" # default
     soap:
         wsdl:
             log: http://api.idshost.priv/log.wsdl
+    proxy:
+        enabled: false
+        ip: null
 when@dev:
     aldaflux_ids_sante:
         proxy:

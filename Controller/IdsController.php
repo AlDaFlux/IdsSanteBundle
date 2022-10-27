@@ -183,8 +183,12 @@ class IdsController extends AbstractController
 
 
 
-
-                    $reponse = $soapClient->CheckPassword($checkPasswordIn);
+                    try
+                    {
+                        $reponse = $soapClient->CheckPassword($checkPasswordIn);
+                    } catch (Exception $ex) {
+                          $this->AddFlash("danger", utf8_decode($soapClient->__getLastResponse())); 
+                    }
 
                    
                     if (is_soap_fault($reponse)) 
