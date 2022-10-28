@@ -48,15 +48,16 @@ class IDSLog
         $this->options =array('compression'=>true,'exceptions'=>true,'trace'=>true);
         $this->wsdl = $parameter->Get("aldaflux_ids_sante.soap.wsdl.log");
 
-        $this->user="USER NON DEFINI";
-        if ($token->getToken())
+        
+        if ($_SERVER['HTTP_IDS_USER'])
         {
-            if ($token->getToken()->getUser()!="anon.")
-            {
-                $this->user = $token->getToken()->getUser()->GetUsername();
-                //$this->user = $parameter->Get("aldaflux_ids_sante.prefixe").$token->getToken()->getUser()->GetUsername();
-            }
+            $this->user=$_SERVER['HTTP_IDS_USER'];
         }
+        else
+        {
+            $this->user="USER NON DEFINI";
+        }
+        
         
         $this->active=$parameter->Get("aldaflux_ids_sante.active");
         
