@@ -72,7 +72,7 @@ class CheckPasswordService
             if ($this->passwordHasher->isPasswordValid($user, $CheckPasswordRequest->Password))
             {
                 $CheckPasswordOut->IsValid = true;
-                $CheckPasswordOut->CheckPasswordUserInfo = "Authentifier=".$user->GetUsername().";OrganizationalUnit=Utilisateur;CounterCall=mail:".$user->GetEmail().";";
+                $CheckPasswordOut->CheckPasswordUserInfo = "Authentifier=".$CheckPasswordRequest->Authentifier.";OrganizationalUnit=Utilisateur;CounterCall=mail:".$user->GetEmail().";";
                 $this->logger->info("Mot de passe OK");
             }
             else
