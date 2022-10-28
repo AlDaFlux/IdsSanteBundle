@@ -58,7 +58,7 @@ class CheckPasswordService
          * 
          */
         
-        $user==$this->idsUserSymfony->getUser($CheckPasswordRequest->Authentifier);
+        $user=$this->idsUserSymfony->getUser($CheckPasswordRequest->Authentifier);
         
         
         $CheckPasswordOut = new CheckPasswordOut();
