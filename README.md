@@ -64,3 +64,15 @@ when@dev:
 
 ```
 
+
+## Controller : 
+```
+        if (isset($_SERVER['HTTP_IDS_USER'])) {
+            if ($idsUserSymfony->logUserFromIdsSession()) 
+            {
+                return $this->redirectToRoute('homepage');
+            } else {
+                throw new UsernameNotFoundException(sprintf('Username "%s" does not exist.', $_SERVER['HTTP_IDS_USER']));
+            }
+         }
+```

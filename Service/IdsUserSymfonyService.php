@@ -16,6 +16,8 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 use Psr\Log\LoggerInterface;
 
+use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
+
 
 class IdsUserSymfonyService
 {
@@ -92,10 +94,10 @@ class IdsUserSymfonyService
                 $this->tokenStorage->setToken($token);
                 $session = $this->requestStack->getSession();
                 $session ->set('_security_main', serialize($token));
-
                 /*
                 $event = new InteractiveLoginEvent($this->requestStack, $token);
                 $this->eventDispatcher->dispatch($event, "security.interactive_login");
+                 * 
                  */
                 return true;
             }        
