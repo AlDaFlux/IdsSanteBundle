@@ -32,6 +32,9 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 
+use Doctrine\ORM\EntityManagerInterface;
+
+
 
 ini_set("soap.wsdl_cache_enabled", "0");
 
@@ -52,9 +55,11 @@ class IdsController extends AbstractController
     private $router;
     private $logger;
     private $IDSLog;
+    private $em;
 
-    public function __construct(ParameterBagInterface $parameter,UserPasswordHasherInterface $passwordHasher, UrlGeneratorInterface $router, LoggerInterface $idsLogger, IDSLog $IDSLog)
+    public function __construct(ParameterBagInterface $parameter,UserPasswordHasherInterface $passwordHasher, UrlGeneratorInterface $router, LoggerInterface $idsLogger, IDSLog $IDSLog,EntityManagerInterface $em)
     {
+        $this->em=$em;
         $this->IDSLog=$IDSLog;
         $this->router=$router;
         $this->wdsl=$this->router->generate("ids_checkpassword_wsdl",[], urlGeneratorInterface::ABSOLUTE_URL);
@@ -107,7 +112,7 @@ class IdsController extends AbstractController
         ini_set("soap.wsdl_cache_enabled", "0");
         $classmap = array('CheckPasswordIn' => CheckPasswordIn::class, 'CheckPasswordOut' => CheckPasswordOut::class);
         $server = new SoapServer($this->wdsl, array('classmap' => $classmap));
-        $server->setClass(CheckPasswordService::class,  $this->parameter, $this->passwordHasher, $this->getDoctrine()->getManager(), $this->logger);
+        $server->setClass(CheckPasswordService::class,  $this->parameter, $this->passwordHasher, $this->em, $this->logger);
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $response = new Response();
                 $response->headers->set('Content-Type', 'text/xml; charset=ISO-8859-1');
