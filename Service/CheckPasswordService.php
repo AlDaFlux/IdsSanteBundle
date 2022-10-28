@@ -47,10 +47,7 @@ class CheckPasswordService
         }
 
         $method=$this->parameter->get("aldaflux_ids_sante.user.find_by");
-        
         $username= substr($CheckPasswordRequest->Authentifier, strlen($this->prefixe));
-        
-        
         $user=$this->em->getRepository($this->parameter->get("aldaflux_ids_sante.user.class"))->{$method}($username);
         
         $CheckPasswordOut = new CheckPasswordOut();

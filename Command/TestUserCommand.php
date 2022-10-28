@@ -16,6 +16,7 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
+use Aldaflux\AldafluxIdsSanteBundle\Service\IdsUserSymfonyService;
 
 
 class TestUserCommand extends Command
@@ -25,12 +26,14 @@ class TestUserCommand extends Command
     private $io;
     private $passwordHasher;
     private $em;
+    private $idsUserSymfony;
     private $parameter;
 
-    public function __construct(EntityManagerInterface $em, ParameterBagInterface $parameter, UserPasswordHasherInterface $passwordHasher)
+    public function __construct(EntityManagerInterface $em, ParameterBagInterface $parameter, UserPasswordHasherInterface $passwordHasher, IdsUserSymfonyService $idsUserSymfony)
     {
         parent::__construct();
         $this->em=$em;
+        $this->idsUserSymfony=$idsUserSymfony;
         $this->passwordHasher = $passwordHasher;
         $this->parameter= $parameter;
         
@@ -77,10 +80,7 @@ class TestUserCommand extends Command
 
         $username = $input->getArgument('username');
 
-        $classeUser=$this->parameter->get("aldaflux_ids_sante.user.class");
-        $method=$this->parameter->get("aldaflux_ids_sante.user.find_by");
-
-        $user=$this->em->getRepository($classeUser)->{$method}($username);
+        $user = $this->idsUserSymfony->getUser($username);
         
         if ($user)
         {
@@ -91,9 +91,6 @@ class TestUserCommand extends Command
         else
         {
             $output->writeln("<error>Utilisateur non trouvé ! </error>");
-            $output->writeln("classeUser :".$classeUser);
-            $output->writeln("method :".$method);
-            $output->writeln("username:".$username);
         }
 
         

@@ -21,6 +21,17 @@ services:
             -
                 name:     monolog.logger
                 channel:       'ids'
+                
+    Aldaflux\AldafluxIdsSanteBundle\Service\IdsUserSymfonyService:
+        arguments: ["@parameter_bag", "@logger","@doctrine.orm.default_entity_manager"]
+        tags:
+            -
+                name:     monolog.logger
+                channel:       'ids'
+    indaflux_ids_sante.user_symfony:
+        alias: Aldaflux\AldafluxIdsSanteBundle\Service\IdsUserSymfonyService
+        public: true        
+                
         
     Aldaflux\AldafluxIdsSanteBundle\Service\IDSLog:
         arguments: ["@parameter_bag","@security.token_storage", "@request_stack", "@logger"]
@@ -40,7 +51,7 @@ services:
                 id:       'aldaflux.ids_sante_collector'
 
     Aldaflux\AldafluxIdsSanteBundle\Command\TestUserCommand:
-        arguments: ["@doctrine.orm.default_entity_manager","@parameter_bag", "@security.user_password_hasher"]
+        arguments: ["@doctrine.orm.default_entity_manager","@parameter_bag", "@security.user_password_hasher", "@indaflux_ids_sante.user_symfony"]
         tags:
             -
                 name:     console.command
