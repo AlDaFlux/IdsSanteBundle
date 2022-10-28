@@ -93,8 +93,10 @@ class IdsUserSymfonyService
                 $session = $this->requestStack->getSession();
                 $session ->set('_security_main', serialize($token));
 
+                /*
                 $event = new InteractiveLoginEvent($this->requestStack, $token);
                 $this->eventDispatcher->dispatch($event, "security.interactive_login");
+                 */
                 return true;
             }        
             return false;
