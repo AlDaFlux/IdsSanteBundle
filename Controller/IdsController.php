@@ -58,6 +58,7 @@ class IdsController extends AbstractController
     private $logger;
     private $IDSLog;
     private $em;
+    private $idsUserSymfony;
 
     public function __construct(
             ParameterBagInterface $parameter,
@@ -69,6 +70,7 @@ class IdsController extends AbstractController
             EntityManagerInterface $em)
     {
         $this->em=$em;
+        $this->idsUserSymfony=$idsUserSymfony;
         $this->IDSLog=$IDSLog;
         $this->router=$router;
         $this->wdsl=$this->router->generate("ids_checkpassword_wsdl",[], urlGeneratorInterface::ABSOLUTE_URL);
@@ -121,7 +123,7 @@ class IdsController extends AbstractController
         ini_set("soap.wsdl_cache_enabled", "0");
         $classmap = array('CheckPasswordIn' => CheckPasswordIn::class, 'CheckPasswordOut' => CheckPasswordOut::class);
         $server = new SoapServer($this->wdsl, array('classmap' => $classmap));
-        $server->setClass(CheckPasswordService::class,  $this->parameter, $this->passwordHasher, $this->em, $this->logger);
+        $server->setClass(CheckPasswordService::class,  $this->parameter, $this->passwordHasher, $this->em, $this->logger,$this->idsUserSymfony);
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $response = new Response();
                 $response->headers->set('Content-Type', 'text/xml; charset=ISO-8859-1');
