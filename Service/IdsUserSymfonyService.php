@@ -33,7 +33,17 @@ class IdsUserSymfonyService
     public function getUser($usernameWPrefix)
     {
         $method=$this->parameter->get("aldaflux_ids_sante.user.find_by");
-        $username= substr($usernameWPrefix, strlen($this->prefixe));
+        
+        if (substr($usernameWPrefix,0,strlen($this->prefixe))==$this->prefixe)
+        {
+            $username= substr($usernameWPrefix, strlen($this->prefixe));
+        }
+        else
+        {
+            $username= $usernameWPrefix;
+        }
+        
+        
         
         $user=$this->em->getRepository($this->parameter->get("aldaflux_ids_sante.user.class"))->{$method}($username);
         
