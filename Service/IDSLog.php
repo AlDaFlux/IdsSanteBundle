@@ -49,7 +49,7 @@ class IDSLog
         $this->wsdl = $parameter->Get("aldaflux_ids_sante.soap.wsdl.log");
 
         
-        if ($_SERVER['HTTP_IDS_USER'])
+        if (array_key_exists('HTTP_IDS_USER', $_SERVER))
         {
             $this->user=$_SERVER['HTTP_IDS_USER'];
         }
