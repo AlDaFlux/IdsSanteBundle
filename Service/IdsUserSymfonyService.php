@@ -8,6 +8,10 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 
+use Symfony\Component\Security\Core\Authentication\Token\Storage\UsageTrackingTokenStorage;
+
+use Symfony\Component\HttpFoundation\RequestStack;
+
 
 use Psr\Log\LoggerInterface;
 
@@ -19,14 +23,18 @@ class IdsUserSymfonyService
     protected $logger;
     protected $em;
     protected $prefixe;
+    protected $tokenStorage;
+    protected $requestStack;
     
     
-    public function __construct(ParameterBagInterface $parameter, LoggerInterface $logger,EntityManagerInterface $em)
+    public function __construct(ParameterBagInterface $parameter, LoggerInterface $logger,EntityManagerInterface $em, UsageTrackingTokenStorage $tokenStorage,RequestStack $requestStack)
     {
         $this->prefixe=$parameter->get("aldaflux_ids_sante.prefixe");
         $this->logger=$logger;
         $this->parameter=$parameter;
         $this->em=$em;
+        $this->tokenStorage=$tokenStorage;
+        $this->requestStack=$requestStack;
     }
     
     
@@ -77,8 +85,11 @@ class IdsUserSymfonyService
             $user = $this->getUser($username);
             if ($user) {
                 $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
-                $this->get('security.token_storage')->setToken($token);
-                $this->get('session')->set('_security_main', serialize($token));
+                $this->tokenStorage->setToken($token);
+                $session = $this->requestStack->getSession();
+                $session ->set('_security_main', serialize($token));
+                
+                //$this->get('session')->set('_security_main', serialize($token));
 //                $event = new InteractiveLoginEvent($request, $token);
 //                $eventDispatcher->dispatch($event, "security.interactive_login");
                 return true;

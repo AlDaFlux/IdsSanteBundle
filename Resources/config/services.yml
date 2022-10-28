@@ -5,7 +5,7 @@ services:
 #        bind:               # defines the scalar arguments once and apply them to any service defined/created in this file
 
     Aldaflux\AldafluxIdsSanteBundle\Service\IdsUserSymfonyService:
-        arguments: ["@parameter_bag", "@logger","@doctrine.orm.default_entity_manager"]
+        arguments: ["@parameter_bag", "@logger","@doctrine.orm.default_entity_manager","@security.token_storage","@request_stack"]
         tags:
             -
                 name:     monolog.logger
