@@ -5,7 +5,7 @@ services:
 #        bind:               # defines the scalar arguments once and apply them to any service defined/created in this file
         
     Aldaflux\AldafluxIdsSanteBundle\Controller\IdsController:
-        arguments: ["@parameter_bag", "@security.user_password_hasher", "@router.default", "@logger", "@indaflux_ids_sante.idslog"]
+        arguments: ["@parameter_bag", "@security.user_password_hasher", "@router.default", "@logger", "@indaflux_ids_sante.idslog", "@indaflux_ids_sante.user_symfony"]
         tags:
             -
                 name: 'controller.service_arguments'
