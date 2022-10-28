@@ -34,6 +34,8 @@ use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 
 use Doctrine\ORM\EntityManagerInterface;
 
+use Aldaflux\AldafluxIdsSanteBundle\Service\IdsUserSymfonyService;
+
 
 
 ini_set("soap.wsdl_cache_enabled", "0");
@@ -57,7 +59,14 @@ class IdsController extends AbstractController
     private $IDSLog;
     private $em;
 
-    public function __construct(ParameterBagInterface $parameter,UserPasswordHasherInterface $passwordHasher, UrlGeneratorInterface $router, LoggerInterface $idsLogger, IDSLog $IDSLog,EntityManagerInterface $em)
+    public function __construct(
+            ParameterBagInterface $parameter,
+            UserPasswordHasherInterface $passwordHasher, 
+            UrlGeneratorInterface $router, 
+            LoggerInterface $idsLogger, 
+            IDSLog $IDSLog,
+            IdsUserSymfonyService $idsUserSymfony,
+            EntityManagerInterface $em)
     {
         $this->em=$em;
         $this->IDSLog=$IDSLog;
