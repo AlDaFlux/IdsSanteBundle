@@ -11,7 +11,7 @@ use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\UsageTrackingTokenStorage;
 
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+#use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 
 use Psr\Log\LoggerInterface;
@@ -32,7 +32,8 @@ class IdsUserSymfonyService
     protected $request;
     
     
-    public function __construct(ParameterBagInterface $parameter, LoggerInterface $logger,EntityManagerInterface $em, UsageTrackingTokenStorage $tokenStorage,RequestStack $requestStack,EventDispatcherInterface $eventDispatcher)
+//    public function __construct(ParameterBagInterface $parameter, LoggerInterface $logger,EntityManagerInterface $em, UsageTrackingTokenStorage $tokenStorage,RequestStack $requestStack,EventDispatcherInterface $eventDispatcher)
+    public function __construct(ParameterBagInterface $parameter, LoggerInterface $logger,EntityManagerInterface $em, UsageTrackingTokenStorage $tokenStorage,RequestStack $requestStack)
     {
         $this->prefixe=$parameter->get("aldaflux_ids_sante.prefixe");
         $this->logger=$logger;
@@ -40,7 +41,7 @@ class IdsUserSymfonyService
         $this->em=$em;
         $this->tokenStorage=$tokenStorage;
         $this->requestStack=$requestStack;
-        $this->eventDispatcher=$eventDispatcher;
+//        $this->eventDispatcher=$eventDispatcher;
     }
     
     
