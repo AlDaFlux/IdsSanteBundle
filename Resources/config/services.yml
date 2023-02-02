@@ -13,7 +13,6 @@ services:
                 name:     monolog.logger
                 channel:       'ids'
                 
-        calls: [['setContainer', ['@Psr\Container\ContainerInterface']]]
  
     Aldaflux\AldafluxIdsSanteBundle\Service\CheckPasswordService:
         arguments: ["@parameter_bag", "@security.user_password_hasher", "@doctrine.orm.default_entity_manager", "@logger"]
