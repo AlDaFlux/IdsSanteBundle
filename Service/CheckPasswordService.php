@@ -15,6 +15,9 @@ use Doctrine\ORM\EntityManagerInterface;
 
 use \SoapFault;
 
+use Aldaflux\AldafluxIdsSanteBundle\Service\IdsUserSymfonyService;
+
+
 class CheckPasswordService 
 {
 
@@ -23,14 +26,16 @@ class CheckPasswordService
     private $em;
     private $parameter;
     private $logger;
+    private $idsUserSymfony;
         
-    public function __construct(ParameterBagInterface $parameter,UserPasswordHasherInterface $passwordHasher,EntityManagerInterface $em, LoggerInterface $logger  )
+    public function __construct(ParameterBagInterface $parameter,UserPasswordHasherInterface $passwordHasher,EntityManagerInterface $em, LoggerInterface $logger ,IdsUserSymfonyService $idsUserSymfony )
     {
         $this->passwordHasher=$passwordHasher;
         $this->em=$em;
         $this->parameter=$parameter;
         $this->logger=$logger;
         $this->prefixe=$parameter->get("aldaflux_ids_sante.prefixe");
+        $this->idsUserSymfony=$idsUserSymfony;
 
     }
     
@@ -45,13 +50,9 @@ class CheckPasswordService
             throw new SoapFault("Erreur ", utf8_encode($clientreponse));
             return;
         }
-
-        $method=$this->parameter->get("aldaflux_ids_sante.user.find_by");
+ 
+        $user==$this->idsUserSymfony->getUser($CheckPasswordRequest->Authentifier);
         
-        $username= substr($CheckPasswordRequest->Authentifier, strlen($this->prefixe));
-        
-        
-        $user=$this->em->getRepository($this->parameter->get("aldaflux_ids_sante.user.class"))->{$method}($username);
         
         $CheckPasswordOut = new CheckPasswordOut();
         
@@ -71,7 +72,7 @@ class CheckPasswordService
             {
                 $CheckPasswordOut->IsValid = false;
                 $CheckPasswordOut->CheckPasswordUserInfo = "DenialReason=Bas Pasword;";
-                $this->logger->warning("Mot de passe non concordant", ['username'=>$username]);
+                $this->logger->warning("Mot de passe non concordant", ['username'=>$CheckPasswordRequest->Authentifier]);
             }
         }
         else 
