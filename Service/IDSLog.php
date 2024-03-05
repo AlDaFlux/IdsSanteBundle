@@ -59,7 +59,7 @@ class IDSLog
         }
         
         $this->active=$parameter->Get("aldaflux_ids_sante.active");
-        $this->url=$requestStack->getCurrentRequest()->getRequestUri();
+        $this->url=$requestStack->getCurrentRequest()?->getRequestUri();
         $this->logger=$logger;
         
         
