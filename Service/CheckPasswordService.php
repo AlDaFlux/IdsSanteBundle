@@ -38,6 +38,9 @@ class CheckPasswordService
     
     public function CheckPassword(CheckPasswordIn $CheckPasswordRequest) 
     {
+
+        $this->logger->info("CheckPassword");
+
  
         if (empty($CheckPasswordRequest->Authentifier) || empty($CheckPasswordRequest->OrganizationalUnit) || empty($CheckPasswordRequest->Password)) {
             $clientreponse = "Requete d'identification invalide";

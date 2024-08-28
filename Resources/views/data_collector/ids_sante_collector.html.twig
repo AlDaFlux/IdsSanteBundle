@@ -18,7 +18,7 @@
             {% include('@AldafluxIdsSante/data_collector/icon/ids_sante.svg.twig') %}
             <span class="sf-toolbar-value">IDS Désactivé</span>
         {% endif  %}
-                    <span class="sf-toolbar-status">{{collector.LogCount}} </span>
+            <span class="sf-toolbar-status">{{collector.LogCount}} </span>
         
         
 
@@ -41,11 +41,12 @@
             <span class='sf-toolbar-status {{ collector.ErrorLogCount ? 'sf-toolbar-status-red' : '' }}'>{{ collector.ErrorLogCount }}</span>
         </div>
         {%  if collector.LogCount %}
-        <div class="sf-toolbar-info-piece">
-            <b>Titre</b>
-            <span class='sf-toolbar-status {{ collector.title ? 'sf-toolbar-status-greeen' : 'sf-toolbar-status-red' }}'>{{ collector.title }}</span>
-        </div>
+            <div class="sf-toolbar-info-piece">
+                <b>Titre</b>
+                <span class='sf-toolbar-status {{ collector.title ? 'sf-toolbar-status-greeen' : 'sf-toolbar-status-red' }}'>{{ collector.title }}</span>
+            </div>
         {% endif %}
+
         
     {% endset %}
 
@@ -118,20 +119,20 @@
                 <span class="label">Application name</span>
             </div>
             <div class="metric">
-                <span class="value">Soap Wsdl Log</span>
-                <span class="label">{{collector.WsdlLog}}</span>
+                <span class="value">{{collector.apiUrl}}</span>
+                <span class="label">REST Api url</span>
             </div>
 
                <div class="metric">
-                <span class="value">
-                {% if  collector.getIdsUser %}
-                    {{collector.getIdsUser}}
-                {% else %}
-                                {% include "@AldafluxIdsSante/data_collector/icon/redcross.svg.twig" %} 
-                {% endif %}
-                </span>
-                <span class="label"> Ids User</span>
-            </div>
+                    <span class="value">
+                    {% if  collector.getIdsUser %}
+                        {{collector.getIdsUser}}
+                    {% else %}
+                                    {% include "@AldafluxIdsSante/data_collector/icon/redcross.svg.twig" %} 
+                    {% endif %}
+                    </span>
+                    <span class="label"> Ids User</span>
+                </div>
                 
                <div class="metric">
                 <span class="value">
@@ -172,35 +173,56 @@
             </table>
     {% endif %} 
         
+    
+    
         {% if collector.IDSLogs | length  > 0  %}
+            
+     {% for log in collector.IDSLogs %}
         
       <table id="search-results">
-            <thead>
+        <tbody>
                 <tr>
-                    <th scope="col">PageName</th>
-                    <th scope="col">Requester</th>
-                    <th scope="col">AuthCookie</th>
-                    <th scope="col">OrganizationUnit</th>
-                    <th scope="col">Unit</th>
-                    <th scope="col">Patient</th>
-                    <th scope="col">AccessType</th>
-                    <th scope="col">Extra</th>
+                    <th scope="col">documentId</th>
+                    <td>{{log.documentId}}</td>
                 </tr>
-            </thead>
-    <tbody>
-     {% for log in collector.IDSLogs %}
                 <tr>
-                    <td>{{log.PageName}}</td>
-                    <td>{{log.Requester}}</td>
-                    <td>{{log.AuthCookie}}</td>
-                    <td>{{log.OrganizationUnit}}</td>
-                    <td>{{log.Unit}}</td>
-                    <td>{{log.Patient}}</td>
-                    <td>{{log.AccessType}}</td>
-                    <td>{{log.Extra}}</td>
+                    <th scope="col">application</th>
+                    <td>{{log.application}}</td>
                 </tr>
-     {% endfor %}
-    </tbody>
+                <tr>
+                    <th scope="col">accessType</th>
+                    <td>{{log.accessType}}</td>
+                </tr>
+                <tr>
+                    <th scope="col">session</th>
+                    <td>{{log.session}}</td>
+                </tr>
+                <tr>
+                    <th scope="col">organizationalUnit</th>
+                    <td>{{log.organizationalUnit}}</td>
+                </tr>
+                <tr>
+                    <th scope="col">pageName</th>
+                    <td>{{log.pageName}}</td>
+                </tr>
+                <tr>
+                    <th scope="col">patient</th>
+                    <td>{{log.patient}}</td>
+                 </tr>
+                <tr>
+                   <th scope="col">user</th>
+                    <td>{{log.user}}</td>
+                </tr>
+                <tr>
+                    <th scope="col">extra</th>
+                    <td>{{log.extra}}</td>
+                </tr>
+                <tr>
+                    <th scope="col">logDate</th>
+                    <td>{{log.logDate}}</td>
+                </tr>
+          {% endfor %}
+       </tbody>
     </table>  
                 
      {% else %}

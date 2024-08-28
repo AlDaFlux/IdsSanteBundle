@@ -30,6 +30,11 @@ class AldafluxIdsSanteExtension extends Extension
         $container->setParameter( 'aldaflux_ids_sante.ip', $config['proxy']['ip']);
         $container->setParameter( 'aldaflux_ids_sante.soap.wsdl.log', $config['soap']['wsdl']['log']);
         
+        
+        $container->setParameter( 'aldaflux_ids_sante.api_root_url', $config['api_root_url']);
+        $container->setParameter( 'aldaflux_ids_sante.application_key', $config['application_key']);
+        $container->setParameter( 'aldaflux_ids_sante.token', $config['token']);
+        
         $loader->load('services.yml');
                 
         

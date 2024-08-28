@@ -3,6 +3,7 @@
 namespace Aldaflux\AldafluxIdsSanteBundle\Controller;
  
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Doctrine\ORM\EntityManagerInterface;
  
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
@@ -28,6 +29,7 @@ use Psr\Log\LoggerInterface;
 
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\FormFactoryInterface;
 
 
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
@@ -46,24 +48,21 @@ class IdsController extends AbstractController
 {
     
     
-    private $parameter;
     private $wdsl;
-    private $passwordHasher;
-    private $router;
     private $logger;
-    private $IDSLog;
 
-    public function __construct(ParameterBagInterface $parameter,UserPasswordHasherInterface $passwordHasher, UrlGeneratorInterface $router, LoggerInterface $idsLogger, IDSLog $IDSLog)
+    public function __construct(
+            private ParameterBagInterface $parameter,
+            private EntityManagerInterface $em,
+            private UserPasswordHasherInterface $passwordHasher, 
+            private UrlGeneratorInterface $router, 
+            LoggerInterface $idsLogger, 
+            private IDSLog $IDSLog,
+            FormFactoryInterface $formBuilder
+            )
     {
-        $this->IDSLog=$IDSLog;
-        $this->router=$router;
         $this->wdsl=$this->router->generate("ids_checkpassword_wsdl",[], urlGeneratorInterface::ABSOLUTE_URL);
-        $this->passwordHasher=$passwordHasher;
-        $this->parameter=$parameter;
         $this->prefixe=$parameter->get("aldaflux_ids_sante.prefixe");
-        
-        
-        
         $this->logger=$idsLogger;
     }
 
@@ -105,9 +104,10 @@ class IdsController extends AbstractController
         $this->logger->info('ids_checkpasswordservice : CheckpasswordServiceAction');
         
         ini_set("soap.wsdl_cache_enabled", "0");
+        
         $classmap = array('CheckPasswordIn' => CheckPasswordIn::class, 'CheckPasswordOut' => CheckPasswordOut::class);
         $server = new SoapServer($this->wdsl, array('classmap' => $classmap));
-        $server->setClass(CheckPasswordService::class,  $this->parameter, $this->passwordHasher, $this->getDoctrine()->getManager(), $this->logger);
+        $server->setClass(CheckPasswordService::class,  $this->parameter, $this->passwordHasher, $this->em, $this->logger);
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $response = new Response();
                 $response->headers->set('Content-Type', 'text/xml; charset=ISO-8859-1');
@@ -145,6 +145,7 @@ class IdsController extends AbstractController
          
         $this->logger->info('ids_checkpassword_test : testCheckpasswordAction');
          
+         
           $form = $this->createFormBuilder()
                  ->add('login', TextType::class, array('required' => false))
                  ->add('password', PasswordType::class)
@@ -157,7 +158,6 @@ class IdsController extends AbstractController
                     $login=$this->prefixe.$form->get('login')->getData();
                     $password=$form->get('password')->getData();
 
-                    
                     /*  'proxy_host' => 'URL PROXY',
                         'proxy_port' => 'PORT PROXY'*/
                     
@@ -175,17 +175,15 @@ class IdsController extends AbstractController
                         )
                     ];                    
                     
+//                    libxml_disable_entity_loader(false);
                     $soapClient =new \SoapClient($this->wdsl, $options);
+ 
                     $checkPasswordIn = new CheckPasswordIn();
                     $checkPasswordIn->Authentifier=$login;
                     $checkPasswordIn->OrganizationalUnit="test";
                     $checkPasswordIn->Password=$password;
 
-
-
-
                     $reponse = $soapClient->CheckPassword($checkPasswordIn);
-
                    
                     if (is_soap_fault($reponse)) 
                     {
@@ -229,84 +227,89 @@ class IdsController extends AbstractController
         $dateDebut =clone $dateFin;
         $dateDebut->modify("-2 days");
 
+        $logs=array();
+        
 
-        $cookie = $_COOKIE["sessionids"];
-        $wsdl = $this->parameter->Get("aldaflux_ids_sante.soap.wsdl.log");
-                
-        
-        $classmap = array('logLine' => logLine::class);
-        $options = array('compression' => true, 'exceptions' => true, 'trace' => true, 'classmap' => $classmap);
-     
-        $request = new getLogLineRequest();
-        $request->Application = $this->parameter->get("aldaflux_ids_sante.application_name")."3213213";
-        $request->AuthCookie = $cookie;
-        $request->Requester = $_SERVER['HTTP_IDS_USER'];
-        $request->OrganizationUnitFilter = "*";
-        $request->UnitFilter = "*";
-        $request->PatientFilter = "*";
-        $request->ReqFilter = "*";
-        $request->ExtraFilter = "%%";
- 
-        $request->MinTimeFilter =  $dateDebut->format(DATE_ATOM);
-        $request->MaxTimeFilter =  $dateFin->format(DATE_ATOM);
-        
-        try 
+        if (isset($_COOKIE["sessionids"]))
         {
-            $service = new \SoapClient($wsdl, $options);
-        }
-        catch (\Exception $exeption) 
-        {
- 
-            $erroLog=array();
-            $erroLog["faultcode"]=$exeption->faultcode;
-            $erroLog["faultstring"]=utf8_decode($exeption->faultstring); 
-            $this->IDSLog->addErrorLog($erroLog);  
-        }
-        
-        if (isset($service))
-        {
+            $cookie = $_COOKIE["sessionids"];
+            $wsdl = $this->parameter->Get("aldaflux_ids_sante.soap.wsdl.log");
+
+
+            $classmap = array('logLine' => logLine::class);
+            $options = array('compression' => true, 'exceptions' => true, 'trace' => true, 'classmap' => $classmap);
+
+            $request = new getLogLineRequest();
+            $request->Application = $this->parameter->get("aldaflux_ids_sante.application_name");
+            $request->AuthCookie = $cookie;
+            $request->Requester = $_SERVER['HTTP_IDS_USER'];
+            $request->OrganizationUnitFilter = "*";
+            $request->UnitFilter = "*";
+            $request->PatientFilter = "*";
+            $request->ReqFilter = "*";
+            $request->ExtraFilter = "%%";
+
+            $request->MinTimeFilter =  $dateDebut->format(DATE_ATOM);
+            $request->MaxTimeFilter =  $dateFin->format(DATE_ATOM);
+
             try 
             {
-                $reponse = $service->GetLogLines($request);
+                $service = new \SoapClient($wsdl, $options);
             }
             catch (\Exception $exeption) 
             {
+
                 $erroLog=array();
                 $erroLog["faultcode"]=$exeption->faultcode;
                 $erroLog["faultstring"]=utf8_decode($exeption->faultstring); 
                 $this->IDSLog->addErrorLog($erroLog);  
-                $reponse=null;
-                
             }
-            
-            if (is_soap_fault($reponse)) 
-            {
-                $this->IDSLog->addErrorLog($reponse);  
 
-                $this->AddFlash("danger",utf8_decode($service->__getLastResponse()));
-            }
-            else 
+            if (isset($service))
             {
-                $this->AddFlash("success","SOAP OK ");
+                try 
+                {
+                    $reponse = $service->GetLogLines($request);
+                }
+                catch (\Exception $exeption) 
+                {
+                    $erroLog=array();
+                    $erroLog["faultcode"]=$exeption->faultcode;
+                    $erroLog["faultstring"]=utf8_decode($exeption->faultstring); 
+                    $this->IDSLog->addErrorLog($erroLog);  
+                    $reponse=null;
+
+                }
+
+                if (is_soap_fault($reponse)) 
+                {
+                    $this->IDSLog->addErrorLog($reponse);  
+
+                    $this->AddFlash("danger",utf8_decode($service->__getLastResponse()));
+                }
+                else 
+                {
+                    $this->AddFlash("success","SOAP OK ");
+                }
             }
-        }
-        
-        
-        
-        if (isset($reponse))
-        {
-            if (property_exists($reponse, "logLine"))
+
+
+
+            if (isset($reponse))
             {
-                $logs=$reponse->logLine;
+                if (property_exists($reponse, "logLine"))
+                {
+                    $logs=$reponse->logLine;
+                }
+                else
+                {
+                    $logs=$reponse;
+                }
             }
             else
             {
-                $logs=$reponse;
+                $logs=null;
             }
-        }
-        else
-        {
-            $logs=null;
         }
         
         return $this->render('@AldafluxIdsSante/logs.html.twig' , ['logs'=>$logs]);

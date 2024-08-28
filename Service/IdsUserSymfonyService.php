@@ -66,7 +66,6 @@ class IdsUserSymfonyService
                     "user sans Prefixe "=>$username,
                     "user Classe"=>$this->parameter->get("aldaflux_ids_sante.user.class"),
                     "Methode "=>$method,
-                    "Methode "=>$method,
                     "Trouvé "=>!is_null($user),
                 ];
         if ($user)

@@ -31,6 +31,9 @@ class Configuration implements ConfigurationInterface
         
         $rootNode->children()
                 ->scalarNode( 'application_name' )->defaultValue("none")->end()
+                ->scalarNode( 'api_root_url' )->defaultValue("https://api-test.idshost.fr:8443/v2/api/")->end()
+                ->scalarNode( 'application_key' )->defaultValue("")->end()
+                ->scalarNode( 'token' )->defaultValue("")->end()
                 ->booleanNode( 'active' )->defaultFalse()->end()
                 ->scalarNode( 'prefixe' )->defaultValue("03")->end()
                 ->arrayNode( 'soap' )->addDefaultsIfNotSet()

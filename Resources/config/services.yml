@@ -1,11 +1,11 @@
 services:
-#    _defaults:
-#        autowire: true      # Automatically injects dependencies in your services.
-#        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
-#        bind:               # defines the scalar arguments once and apply them to any service defined/created in this file
+    _defaults:
+        autowire: true      # Automatically injects dependencies in your services.
+        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+        bind:               # defines the scalar arguments once and apply them to any service defined/created in this file
 
     Aldaflux\AldafluxIdsSanteBundle\Service\IdsUserSymfonyService:
-        arguments: ["@parameter_bag", "@logger","@doctrine.orm.default_entity_manager","@security.token_storage","@request_stack","@debug.event_dispatcher"]
+        arguments: ["@parameter_bag", "@logger","@doctrine.orm.default_entity_manager","@security.token_storage","@request_stack","@debug.event_dispatcher"]        
         tags:
             -
                 name:     monolog.logger
@@ -15,15 +15,16 @@ services:
         public: true        
         
     Aldaflux\AldafluxIdsSanteBundle\Controller\IdsController:
-        arguments: ["@parameter_bag", "@security.user_password_hasher", "@router.default", "@logger", "@indaflux_ids_sante.idslog", "@indaflux_ids_sante.user_symfony","@doctrine.orm.default_entity_manager"]
+#        arguments: ["@parameter_bag", "@security.user_password_hasher", "@router.default", "@logger", "@indaflux_ids_sante.idslog", "@indaflux_ids_sante.user_symfony","@doctrine.orm.default_entity_manager","@form.factory"]
+        arguments: ["@parameter_bag", "@doctrine.orm.default_entity_manager", "@security.user_password_hasher", "@router.default", "@logger", "@indaflux_ids_sante.idslog", "@form.factory"]
         tags:
             -
                 name: 'controller.service_arguments'
             -
                 name:     monolog.logger
                 channel:       'ids'
-                
-        # calls: [['setContainer', ['@Psr\Container\ContainerInterface']]]
+        autoconfigure: true
+        calls: [['setContainer', ['@Psr\Container\ContainerInterface']]]
  
     Aldaflux\AldafluxIdsSanteBundle\Service\CheckPasswordService:
         arguments: ["@parameter_bag", "@security.user_password_hasher", "@doctrine.orm.default_entity_manager", "@logger", "@indaflux_ids_sante.user_symfony"]
@@ -32,20 +33,35 @@ services:
                 name:     monolog.logger
                 channel:       'ids'
 
+
+    Aldaflux\AldafluxIdsSanteBundle\Service\ApiAuthentifiedService:
+        tags:
+            -
+                name:     monolog.logger
+                channel:       'ids'
                 
-        
     Aldaflux\AldafluxIdsSanteBundle\Service\IDSLog:
-        arguments: ["@parameter_bag","@security.token_storage", "@request_stack", "@logger"]
+#        arguments: ["@parameter_bag","@security.token_storage", "@request_stack", "@logger"]
         tags:
             -
                 name:     monolog.logger
                 channel:       'ids.log'
+                
+                
+    Aldaflux\AldafluxIdsSanteBundle\Service\IdsMainService:
+        tags:
+            -
+                name:     monolog.logger
+                channel:       'ids.log'
+                
+                
     indaflux_ids_sante.idslog:
         alias: Aldaflux\AldafluxIdsSanteBundle\Service\IDSLog
         public: true        
 
     Aldaflux\AldafluxIdsSanteBundle\DataCollector\IdsSanteCollector:
         arguments: ["@indaflux_ids_sante.idslog","@parameter_bag"]
+#        arguments: ["@parameter_bag"]
         tags:
             -
                 name:     data_collector
@@ -57,3 +73,5 @@ services:
             -
                 name:     console.command
                 id:       'aldaflux.ids_user_test'
+
+

@@ -20,18 +20,21 @@ class IdsSanteCollector extends AbstractDataCollector
     private $ids_active;
     private $ids_user;
     private $ids_appilcation_name;
+    
     private $wsdlLog;
+    
+    private $apiUrl;
    
     private $profiles;
 
   
+//    public function __construct(ParameterBagInterface $parameter)
     public function __construct(IDSLog $service,ParameterBagInterface $parameter)
     {
         $this->service = $service;
         $this->ids_appilcation_name = $parameter->Get("aldaflux_ids_sante.application_name");
         $this->ids_active = $parameter->Get("aldaflux_ids_sante.active");
-        
-        $this->wsdlLog = $parameter->Get("aldaflux_ids_sante.soap.wsdl.log");
+        $this->apiUrl = $parameter->Get("aldaflux_ids_sante.api_root_url");
         
         if ( isset($_SERVER['HTTP_IDS_USER'])) $this->ids_user = $_SERVER['HTTP_IDS_USER'];
         else $this->ids_user = "";
@@ -52,22 +55,25 @@ class IdsSanteCollector extends AbstractDataCollector
     
     public function collect(Request $request, Response $response, \Throwable $exception = null)
     {
+        
         if (count($this->service->getLogs())==1)
         {
             $firtLineLog=$this->service->getLogs()[0];
-            $title=$firtLineLog->Extra;
+            $title=$firtLineLog["extra"];
+            
+            //$title="firtLineLog->Extra";
         }
         else
         {
             $title=null;
         }
-        
              $this->data = array(
             'idslogs' => $this->service->getLogs(), 
             'errorlogs' => $this->service->getErrorLogs(), 
             'service' => $this->service,
             'title' => $title,
             'wsdl_log' => $this->wsdlLog,
+            'api_url' => $this->apiUrl,
             'ids_active' => $this->ids_active,
             'ids_appilcation_name' => $this->ids_appilcation_name,
             'ids_user' => $this->ids_user,
@@ -85,6 +91,11 @@ class IdsSanteCollector extends AbstractDataCollector
     public function getWsdlLog()
     {
         return $this->data['wsdl_log'];
+    }
+    
+    public function getApiUrl()
+    {
+        return $this->data['api_url'];
     }
     
     
