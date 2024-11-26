@@ -14,9 +14,7 @@ services:
         alias: Aldaflux\AldafluxIdsSanteBundle\Service\IdsUserSymfonyService
         public: true        
         
-    Aldaflux\AldafluxIdsSanteBundle\Controller\IdsController:
-#        arguments: ["@parameter_bag", "@security.user_password_hasher", "@router.default", "@logger", "@indaflux_ids_sante.idslog", "@indaflux_ids_sante.user_symfony","@doctrine.orm.default_entity_manager","@form.factory"]
-        arguments: ["@parameter_bag", "@doctrine.orm.default_entity_manager", "@security.user_password_hasher", "@router.default", "@logger", "@indaflux_ids_sante.idslog", "@form.factory"]
+    Aldaflux\AldafluxIdsSanteBundle\Controller\IdsRestController:
         tags:
             -
                 name: 'controller.service_arguments'
@@ -24,10 +22,36 @@ services:
                 name:     monolog.logger
                 channel:       'ids'
         autoconfigure: true
-        calls: [['setContainer', ['@Psr\Container\ContainerInterface']]]
+
+
+        
+    Aldaflux\AldafluxIdsSanteBundle\Controller\IdsLogsController:
+        tags:
+            -
+                name: 'controller.service_arguments'
+            -
+                name:     monolog.logger
+                channel:       'ids'
+        autoconfigure: true
+
+
+        
+        
+    Aldaflux\AldafluxIdsSanteBundle\Controller\IdsTestController:
+        tags:
+            -
+                name: 'controller.service_arguments'
+            -
+                name:     monolog.logger
+                channel:       'ids'
+        autoconfigure: true
+
+
+        
+        
  
     Aldaflux\AldafluxIdsSanteBundle\Service\CheckPasswordService:
-        arguments: ["@parameter_bag", "@security.user_password_hasher", "@doctrine.orm.default_entity_manager", "@logger", "@indaflux_ids_sante.user_symfony"]
+#        arguments: ["@parameter_bag", "@security.user_password_hasher", "@doctrine.orm.default_entity_manager", "@logger", "@indaflux_ids_sante.user_symfony"]
         tags:
             -
                 name:     monolog.logger
@@ -41,7 +65,6 @@ services:
                 channel:       'ids'
                 
     Aldaflux\AldafluxIdsSanteBundle\Service\IDSLog:
-#        arguments: ["@parameter_bag","@security.token_storage", "@request_stack", "@logger"]
         tags:
             -
                 name:     monolog.logger
