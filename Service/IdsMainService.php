@@ -144,6 +144,7 @@ class IdsMainService
         $this->log($patient,$extra,1);
     }
     
+    
     public function modify($patient,$extra)
     { 
         $this->log($patient,$extra,2);

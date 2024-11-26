@@ -49,6 +49,8 @@ aldaflux_ids_sante:
     user:
         class: "App:User" # default
         find_by: "findOneByUsername" # default
+    counter_call: 
+        route_name: send_mail_otp
     soap:
         wsdl:
             log: http://api.idshost.priv/log.wsdl

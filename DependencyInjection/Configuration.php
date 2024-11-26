@@ -18,7 +18,7 @@ class Configuration implements ConfigurationInterface
     /**
      * {@inheritdoc}
      */
-    public function getConfigTreeBuilder()
+    public function getConfigTreeBuilder() : TreeBuilder
     {
         $treeBuilder = new TreeBuilder('aldaflux_ids_sante');
 
@@ -51,6 +51,12 @@ class Configuration implements ConfigurationInterface
                         ->scalarNode('find_by')->defaultValue('findOneByUsername')->end()
                     ->end()
                 ->end()
+                ->arrayNode( 'counter_call' )->addDefaultsIfNotSet()
+                    ->children()
+                        ->scalarNode('route_name')->defaultValue(null)->end()
+                    ->end()
+                ->end()
+                
                 ->arrayNode( 'proxy' )->addDefaultsIfNotSet()
                     ->children()
                         ->scalarNode( 'enabled' )->defaultValue(false)->end()

@@ -18,11 +18,9 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 use Aldaflux\AldafluxIdsSanteBundle\Service\IdsUserSymfonyService;
 
-
+#[\Symfony\Component\Console\Attribute\AsCommand(name: 'ids:user:test')]
 class TestUserCommand extends Command
 {
-    protected static $defaultName = 'ids:user:test';
-
     private $io;
     private $passwordHasher;
     private $em;
