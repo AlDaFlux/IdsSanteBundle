@@ -92,7 +92,7 @@ class CheckPasswordService
             else
             {
                 $CheckPasswordOut->IsValid = false;
-                $CheckPasswordOut->CheckPasswordUserInfo = $this->parameter->get("application_name")." - DenialReason=Bad Password;";
+                $CheckPasswordOut->CheckPasswordUserInfo = $this->parameter->get("aldaflux_ids_sante.application_name")." - DenialReason=Bad Password;";
                 $this->logger->warning("Mot de passe non concordant", ['username'=>$username]);
             }
         }
@@ -100,7 +100,7 @@ class CheckPasswordService
         {
             $this->logger->warning("User {username} non trouvé dans la base", ['username'=>$username]);
             $CheckPasswordOut->IsValid = false;
-            $CheckPasswordOut->CheckPasswordUserInfo = $this->parameter->get("application_name")." - DenialReason=User '".$username."' unknow;";
+            $CheckPasswordOut->CheckPasswordUserInfo = $this->parameter->get("aldaflux_ids_sante.application_name")." - DenialReason=User '".$username."' unknow;";
         }
 
         return $CheckPasswordOut;
