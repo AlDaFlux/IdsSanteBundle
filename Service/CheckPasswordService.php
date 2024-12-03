@@ -62,9 +62,8 @@ class CheckPasswordService
                 
                 $CheckPasswordOut->CheckPasswordUserInfo = "Authentifier=".$user->GetUsername().";OrganizationalUnit=Utilisateur;";
                 
-//                if (isset($this->parameter->get("aldaflux_ids_sante.counter_call.route_name")) &&  $this->parameter->get("aldaflux_ids_sante.counter_call.route_name"))
-                
-                if ($this->parameter->get("aldaflux_ids_sante.counter_call.route_name"))
+
+                if (isset($this->parameter->get("aldaflux_ids_sante.counter_call.route_name")) &&  $this->parameter->get("aldaflux_ids_sante.counter_call.route_name"))
                 {
                     $route="http://".$this->parameter->get("aldaflux_ids_sante.proxy.ip");
                     $route.=$this->router->generate("app_sent_otp"); 
@@ -85,7 +84,7 @@ class CheckPasswordService
             else
             {
                 $CheckPasswordOut->IsValid = false;
-                $CheckPasswordOut->CheckPasswordUserInfo = "DenialReason=Bad Password;";
+                $CheckPasswordOut->CheckPasswordUserInfo = $this->parameter->get("application_name")." - DenialReason=Bad Password;";
                 $this->logger->warning("Mot de passe non concordant", ['username'=>$username]);
             }
         }
@@ -93,7 +92,7 @@ class CheckPasswordService
         {
             $this->logger->warning("User {username} non trouvé dans la base", ['username'=>$username]);
             $CheckPasswordOut->IsValid = false;
-            $CheckPasswordOut->CheckPasswordUserInfo = "DenialReason=User unknow;";
+            $CheckPasswordOut->CheckPasswordUserInfo = $this->parameter->get("application_name")." - DenialReason=User '".$username."' unknow;";
         }
 
         return $CheckPasswordOut;
