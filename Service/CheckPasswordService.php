@@ -62,8 +62,16 @@ class CheckPasswordService
                 
                 $CheckPasswordOut->CheckPasswordUserInfo = "Authentifier=".$user->GetUsername().";OrganizationalUnit=Utilisateur;";
                 
+                if (isset($this->parameter->get("aldaflux_ids_sante.counter_call.route_name")))
+                {
+                    $routename=$this->parameter->get("aldaflux_ids_sante.counter_call.route_name");
+                }
+                else
+                {
+                    $routename='';
+                }
 
-                if (isset($this->parameter->get("aldaflux_ids_sante.counter_call.route_name")) &&  $this->parameter->get("aldaflux_ids_sante.counter_call.route_name"))
+                if ($routename)
                 {
                     $route="http://".$this->parameter->get("aldaflux_ids_sante.proxy.ip");
                     $route.=$this->router->generate("app_sent_otp"); 
