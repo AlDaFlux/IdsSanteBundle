@@ -11,9 +11,12 @@ use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
 
 use Symfony\Component\Security\Core\Authentication\Token\Storage\UsageTrackingTokenStorage;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+
 
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Aldaflux\AldafluxIdsSanteBundle\Service\ApiAuthentifiedService;
 
 
 use Psr\Log\LoggerInterface;
@@ -21,26 +24,22 @@ use Psr\Log\LoggerInterface;
 
 class IdsUserSymfonyService
 {
-       
-    protected $parameter;
-    protected $logger;
-    protected $em;
+ 
     protected $prefixe;
-    protected $tokenStorage;
-    protected $requestStack;
-    protected $eventDispatcher;
     protected $request;
     
     
-    public function __construct(ParameterBagInterface $parameter, LoggerInterface $logger,EntityManagerInterface $em, UsageTrackingTokenStorage $tokenStorage,RequestStack $requestStack,EventDispatcherInterface $eventDispatcher)
+    public function __construct(
+            protected ParameterBagInterface $parameter, 
+            protected LoggerInterface $logger,
+            protected EntityManagerInterface $em, 
+            protected TokenStorageInterface $tokenStorage,
+            protected RequestStack $requestStack,
+            protected EventDispatcherInterface $eventDispatcher, 
+            protected ApiAuthentifiedService $apiAuthentifiedService, 
+            )
     {
         $this->prefixe=$parameter->get("aldaflux_ids_sante.prefixe");
-        $this->logger=$logger;
-        $this->parameter=$parameter;
-        $this->em=$em;
-        $this->tokenStorage=$tokenStorage;
-        $this->requestStack=$requestStack;
-        $this->eventDispatcher=$eventDispatcher;
     }
     
     
@@ -56,9 +55,6 @@ class IdsUserSymfonyService
         {
             $username= $usernameWPrefix;
         }
-        
-        
-        
         $user=$this->em->getRepository($this->parameter->get("aldaflux_ids_sante.user.class"))->{$method}($username);
         
         
@@ -70,14 +66,8 @@ class IdsUserSymfonyService
                     "Methode "=>$method,
                     "Trouvé "=>!is_null($user),
                 ];
-        if ($user)
-        {
-            $this->logger->info('Get User',$log);
-        }
-        else
-        {
-            $this->logger->warning('Get User',$log);
-        }
+
+        $this->logger->warning('Get User',$log);
         
         return($user);
     }
@@ -85,15 +75,15 @@ class IdsUserSymfonyService
     
     public function logUserFromIdsSession()
     {
-        $username = $_SERVER['HTTP_IDS_USER'];
-        
+            $userIds=$this->GetUserFromIds();
+//            $username = $_SERVER['HTTP_IDS_USER'];
+            $username = $userIds->PresentedAuthentifier;
             $user = $this->getUser($username);
             if ($user) {
                 $token = new UsernamePasswordToken($user, 'main', $user->getRoles());
                 $this->tokenStorage->setToken($token);
                 $session = $this->requestStack->getSession();
                 $session ->set('_security_main', serialize($token));
-
                 $event = new InteractiveLoginEvent($this->requestStack->getCurrentRequest(), $token);
                 $this->eventDispatcher->dispatch($event, "security.interactive_login");
                 return true;
@@ -102,7 +92,13 @@ class IdsUserSymfonyService
     }
     
     
-    
-    
+    public function GetUserFromIds()
+    {
+        $sessionIds = $this->requestStack->getCurrentRequest()->cookies->get('sessionids');
+        $rawResponse=$this->apiAuthentifiedService->send41Request('authentication/AuthGetUserInfo/',null,$sessionIds);
+        $userInfo = json_decode($rawResponse->getContent());
+        return($userInfo);
+    }
+     
   
 }
