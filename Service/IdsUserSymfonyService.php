@@ -77,9 +77,12 @@ class IdsUserSymfonyService
     {
             $userIds=$this->GetUserFromIds();
 //            $username = $_SERVER['HTTP_IDS_USER'];
-            $username = $userIds->PresentedAuthentifier;
+            $username = $userIds->PresentedAuthentifier ?? $userIds->Authentifier;
+            
             $user = $this->getUser($username);
-            if ($user) {
+            if ($user) 
+            {
+                $this->logger->info('User :: '. $username."/".$user);
                 $token = new UsernamePasswordToken($user, 'main', $user->getRoles());
                 $this->tokenStorage->setToken($token);
                 $session = $this->requestStack->getSession();
@@ -88,7 +91,12 @@ class IdsUserSymfonyService
                 $this->eventDispatcher->dispatch($event, "security.interactive_login");
                 return true;
             }        
-            return false;
+            else
+            {
+                $this->logger->warning('User not found : '.$username);
+                return false;
+            }
+            
     }
     
     
