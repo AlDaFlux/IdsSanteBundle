@@ -6,10 +6,8 @@ namespace Aldaflux\AldafluxIdsSanteBundle\Command;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Exception\RuntimeException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -18,11 +16,9 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 use Aldaflux\AldafluxIdsSanteBundle\Service\IdsUserSymfonyService;
 
-
+#[\Symfony\Component\Console\Attribute\AsCommand(name: 'ids:user:test')]
 class TestUserCommand extends Command
 {
-    protected static $defaultName = 'ids:user:test';
-
     private $io;
     private $passwordHasher;
     private $em;

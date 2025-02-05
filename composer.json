@@ -9,8 +9,7 @@
  "minimum-stability": "stable",
  "prefer-stable":true,
  "require": {
-       "symfony/framework-bundle": ">=4.0",
-       "doctrine/collections": ">=1.0"
+       "symfony/framework-bundle": ">=7.1"
   },
     "autoload": {
         "psr-4": {
@@ -19,5 +18,3 @@
     }
 
 }
-
-
