@@ -21,6 +21,9 @@ class IdsMainService
     private $options;
     private $wsdl;
     
+    
+    private $url;
+    
 
     protected $profiles = array();
     
@@ -30,7 +33,7 @@ class IdsMainService
             ParameterBagInterface $parameter, 
             TokenStorageInterface $token, 
             RequestStack $requestStack , 
-            LoggerInterface $logger,
+            protected LoggerInterface $logger,
             protected IDSLog $IDSLog,
             protected  ApiAuthentifiedService $apiAuthentifiedService, 
             )
@@ -50,7 +53,6 @@ class IdsMainService
         
         $this->active=$parameter->Get("aldaflux_ids_sante.active");
         $this->url=$requestStack->getCurrentRequest()?->getRequestUri();
-        $this->logger=$logger;
     }
     
     
@@ -143,6 +145,7 @@ class IdsMainService
     { 
         $this->log($patient,$extra,1);
     }
+    
     
     public function modify($patient,$extra)
     { 

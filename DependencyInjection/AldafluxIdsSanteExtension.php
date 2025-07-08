@@ -5,7 +5,10 @@ namespace Aldaflux\AldafluxIdsSanteBundle\DependencyInjection;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
-use Symfony\Component\HttpKernel\DependencyInjection\Extension;
+
+use Symfony\Component\DependencyInjection\Extension\Extension;
+
+
 use Symfony\Component\Config\FileLocator;
 
 class AldafluxIdsSanteExtension extends Extension
@@ -13,7 +16,7 @@ class AldafluxIdsSanteExtension extends Extension
     /**
      * {@inheritdoc}
      */
-    public function load(array $configs, ContainerBuilder $container)
+    public function load(array $configs, ContainerBuilder $container) : void
     {
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
@@ -26,10 +29,14 @@ class AldafluxIdsSanteExtension extends Extension
         $container->setParameter( 'aldaflux_ids_sante.user.class', $config['user']['class']);
         $container->setParameter( 'aldaflux_ids_sante.user.find_by', $config['user']['find_by']);
         $container->setParameter( 'aldaflux_ids_sante.prefixe', $config['prefixe']);
-        $container->setParameter( 'aldaflux_ids_sante.proxy_enabled', $config['proxy']['enabled']);
-        $container->setParameter( 'aldaflux_ids_sante.ip', $config['proxy']['ip']);
+        $container->setParameter( 'aldaflux_ids_sante.proxy.enabled', $config['proxy']['enabled']);
+        $container->setParameter( 'aldaflux_ids_sante.proxy.ip', $config['proxy']['ip']);
         $container->setParameter( 'aldaflux_ids_sante.soap.wsdl.log', $config['soap']['wsdl']['log']);
         
+        if (isset($config['counter_call']['route_name']))
+        {
+            $container->setParameter( 'aldaflux_ids_sante.counter_call.route_name', $config['counter_call']['route_name']);
+        }
         
         $container->setParameter( 'aldaflux_ids_sante.api_root_url', $config['api_root_url']);
         $container->setParameter( 'aldaflux_ids_sante.application_key', $config['application_key']);
