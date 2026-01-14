@@ -1,4 +1,4 @@
- <form method="post" id="disconnect" action="/disconnect">
+ <form method="post" id="disconnect" action="/logout">
     <input id="requester" name="requester" type="hidden" value="{{ app.request.server.get("HTTP_IDS_USER") }}"/>
     <input id="target" name="target" type="hidden" value="{{ path(logout_path) }}" /> 
 </form>
