@@ -27,6 +27,7 @@ services:
         calls: [['setContainer', ['@Psr\Container\ContainerInterface']]]
 
     Aldaflux\AldafluxIdsSanteBundle\Controller\IdsRestController:
+        arguments: ["@indaflux_ids_sante.idslog", "@Aldaflux\\AldafluxIdsSanteBundle\\Service\\CheckPasswordService"]
         tags:
             -
                 name: 'controller.service_arguments'
@@ -37,6 +38,7 @@ services:
         calls: [['setContainer', ['@Psr\Container\ContainerInterface']]]
 
     Aldaflux\AldafluxIdsSanteBundle\Controller\IdsLogsController:
+        arguments: ["@parameter_bag", "@indaflux_ids_sante.idslog"]
         tags:
             -
                 name: 'controller.service_arguments'
@@ -47,6 +49,7 @@ services:
         calls: [['setContainer', ['@Psr\Container\ContainerInterface']]]
 
     Aldaflux\AldafluxIdsSanteBundle\Controller\IdsTestController:
+        arguments: ["@parameter_bag", "@doctrine.orm.default_entity_manager", "@router.default", "@logger", "@indaflux_ids_sante.idslog", "@form.factory", "@http_client", "@Aldaflux\\AldafluxIdsSanteBundle\\Service\\CheckPasswordService"]
         tags:
             -
                 name: 'controller.service_arguments'
