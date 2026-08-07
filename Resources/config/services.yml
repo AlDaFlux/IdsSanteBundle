@@ -25,6 +25,36 @@ services:
                 channel:       'ids'
         autoconfigure: true
         calls: [['setContainer', ['@Psr\Container\ContainerInterface']]]
+
+    Aldaflux\AldafluxIdsSanteBundle\Controller\IdsRestController:
+        tags:
+            -
+                name: 'controller.service_arguments'
+            -
+                name:     monolog.logger
+                channel:       'ids'
+        autoconfigure: true
+        calls: [['setContainer', ['@Psr\Container\ContainerInterface']]]
+
+    Aldaflux\AldafluxIdsSanteBundle\Controller\IdsLogsController:
+        tags:
+            -
+                name: 'controller.service_arguments'
+            -
+                name:     monolog.logger
+                channel:       'ids'
+        autoconfigure: true
+        calls: [['setContainer', ['@Psr\Container\ContainerInterface']]]
+
+    Aldaflux\AldafluxIdsSanteBundle\Controller\IdsTestController:
+        tags:
+            -
+                name: 'controller.service_arguments'
+            -
+                name:     monolog.logger
+                channel:       'ids'
+        autoconfigure: true
+        calls: [['setContainer', ['@Psr\Container\ContainerInterface']]]
  
     Aldaflux\AldafluxIdsSanteBundle\Service\CheckPasswordService:
         arguments: ["@parameter_bag", "@security.user_password_hasher", "@doctrine.orm.default_entity_manager", "@logger", "@indaflux_ids_sante.user_symfony"]
