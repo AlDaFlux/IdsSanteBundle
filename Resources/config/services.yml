@@ -14,6 +14,15 @@ services:
         alias: Aldaflux\AldafluxIdsSanteBundle\Service\IdsUserSymfonyService
         public: true        
         
+    Aldaflux\AldafluxIdsSanteBundle\Controller\IdsController:
+        tags:
+            -
+                name: 'controller.service_arguments'
+            -
+                name:     monolog.logger
+                channel:       'ids'
+        autoconfigure: true
+
     Aldaflux\AldafluxIdsSanteBundle\Controller\IdsRestController:
         tags:
             -

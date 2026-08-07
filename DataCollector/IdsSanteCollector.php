@@ -53,7 +53,7 @@ class IdsSanteCollector extends AbstractDataCollector
     }
 
     
-    public function collect(Request $request, Response $response, \Throwable $exception = null) : void
+    public function collect(Request $request, Response $response, ?\Throwable $exception = null) : void
     {
         
         if (count($this->service->getLogs())==1)

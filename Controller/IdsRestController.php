@@ -13,7 +13,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
     
-#[Route(path: '/ids/rest', methods: 'GET')]
+#[Route(path: '/ids/rest')]
 class IdsRestController extends AbstractController
 {
     public function __construct(
