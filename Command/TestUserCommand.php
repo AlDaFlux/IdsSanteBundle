@@ -19,6 +19,9 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Aldaflux\AldafluxIdsSanteBundle\Service\IdsUserSymfonyService;
 
 
+use Symfony\Component\Console\Attribute\AsCommand;
+
+#[AsCommand(name: 'ids:user:test', description: 'test si un utilisateur existe')]
 class TestUserCommand extends Command
 {
     protected static $defaultName = 'ids:user:test';
